@@ -14,8 +14,6 @@ namespace WorldCupProjectApi.Services
             _database = client.GetDatabase("WorldCupProject");
         }
         
-        
-        // Generic method for BaseService to use
         public IMongoCollection<T> GetCollection<T>(string collectionName) where T : class
         {
             return _database.GetCollection<T>(collectionName);
