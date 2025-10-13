@@ -1,0 +1,30 @@
+services:
+  worldcupapi:
+    image: worldcupapi
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    depends_on:
+      - mongodb
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__MongoDB=mongodb://admin:password@mongodb:27017/WorldCupDB?authSource=admin
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb-worldcup
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb/mongo-init.js:ro
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=WorldCupDB
+
+volumes:
+  mongodb_data:
