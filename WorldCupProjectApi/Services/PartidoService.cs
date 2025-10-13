@@ -13,7 +13,6 @@ public class PartidoService :BaseService<Partido>
             _equipoService = equipoService;
         }
 
-        // Custom methods for Partido
         public async Task<List<Partido>> GetByEstadoAsync(string estado)
         {
             return await _collection.Find(p => p.Estado == estado).ToListAsync();
@@ -82,19 +81,16 @@ public class PartidoService :BaseService<Partido>
             return true;
         }
 
-        // Start a match
         public async Task<bool> IniciarPartidoAsync(string partidoId)
         {
             return await CambiarEstadoAsync(partidoId, "EN_JUEGO");
         }
 
-        // Finish a match
         public async Task<bool> FinalizarPartidoAsync(string partidoId)
         {
             return await CambiarEstadoAsync(partidoId, "FINALIZADO");
         }
 
-        // Populate team information for a match
         public async Task<Partido> GetWithTeamsAsync(string partidoId)
         {
             var partido = await GetByIdAsync(partidoId);
@@ -106,7 +102,6 @@ public class PartidoService :BaseService<Partido>
             return partido;
         }
 
-        // Populate team information for multiple matches
         public async Task<List<Partido>> GetAllWithTeamsAsync()
         {
             var partidos = await GetAllAsync();
