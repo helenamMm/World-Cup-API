@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin | Liga MX Portal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <style>
+    body { background-color: #f4f6f9; font-family: 'Poppins', sans-serif; }
+    /* NAVBAR */
+    .navbar { background: linear-gradient(90deg, #0d6efd, #004aad); }
+    .navbar-brand { font-weight: 700; font-size: 1.25rem; }
+
+    /* CARDS */
+    .card-soft { background:#fff; border:none; border-radius:14px; box-shadow:0 4px 12px rgba(0,0,0,.08); }
+    .section-title { font-weight: 700; }
+
+    /* SIDEBAR */
+    .sidebar-link { display:flex; align-items:center; gap:.5rem; padding:.6rem .9rem; border-radius:10px; color:#0d1b2a; text-decoration:none; }
+    .sidebar-link.active, .sidebar-link:hover { background:#e9f0ff; color:#0d6efd; }
+
+    /* TABLES */
+    .table thead th { background:#0d6efd; color:#fff; }
+    .badge-status { font-weight: 600; }
+
+    /* FOOTER */
+    footer { background:#0d6efd; color:#fff; text-align:center; padding:1rem 0; margin-top:2rem; }
+  </style>
+
+   
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand" href="home.html">Liga MX Portal — Admin</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="home.html">Ver sitio</a></li>
+          <li class="nav-item"><a class="nav-link" href="perfil.html">Perfil</a></li>
+          <li class="nav-item"><a class="nav-link" href="auth.html">Salir</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- LAYOUT -->
+  <div class="container-fluid my-4">
+    <div class="row">
+      <!-- SIDEBAR (offcanvas en móvil) -->
+      <div class="col-12 d-lg-none mb-3">
+        <button class="btn btn-outline-primary" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar">
+          <i class="bi bi-list"></i> Menú
+        </button>
+      </div>
+
+      <div class="offcanvas offcanvas-start show d-none d-lg-block position-static border-0" tabindex="-1" id="adminSidebar" style="width:260px;">
+        <div class="offcanvas-body">
+          <h5 class="fw-bold mb-3">Panel</h5>
+          <nav class="d-grid gap-2">
+            <a class="sidebar-link active" href="#" data-target="#dashSection"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            <a class="sidebar-link" href="#" data-target="#teamsSection"><i class="bi bi-shield-check"></i> Equipos</a>
+            <a class="sidebar-link" href="#" data-target="#playersSection"><i class="bi bi-people"></i> Jugadores</a>
+            <a class="sidebar-link" href="#" data-target="#matchesSection"><i class="bi bi-calendar-event"></i> Partidos</a>
+            <a class="sidebar-link" href="#" data-target="#newsSection"><i class="bi bi-newspaper"></i> Noticias</a>
+            <a class="sidebar-link" href="#" data-target="#usersSection"><i class="bi bi-person-gear"></i> Usuarios</a>
+            <hr>
+            <a class="sidebar-link" href="#" data-target="#settingsSection"><i class="bi bi-gear"></i> Configuración</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- MAIN -->
+      <div class="col-lg-9 col-xl-10 ms-lg-auto">
+        <!-- DASHBOARD -->
+        <section id="dashSection" class="section">
+          <div class="row g-3">
+            <div class="col-sm-6 col-xl-3">
+              <div class="card-soft p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="text-muted">Equipos</div>
+                    <div class="h4 fw-bold">18</div>
+                  </div>
+                  <span class="btn btn-sm btn-primary disabled"><i class="bi bi-shield-check"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="card-soft p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="text-muted">Jugadores</div>
+                    <div class="h4 fw-bold">432</div>
+                  </div>
+                  <span class="btn btn-sm btn-primary disabled"><i class="bi bi-people"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="card-soft p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="text-muted">Partidos (mes)</div>
+                    <div class="h4 fw-bold">46</div>
+                  </div>
+                  <span class="btn btn-sm btn-primary disabled"><i class="bi bi-calendar-event"></i></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="card-soft p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="text-muted">Usuarios</div>
+                    <div class="h4 fw-bold">2,381</div>
+                  </div>
+                  <span class="btn btn-sm btn-primary disabled"><i class="bi bi-person"></i></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-soft p-3 mt-4">
+            <div class="d-flex justify-content-between align-items-center">
+              <h5 class="section-title mb-0">Actividad reciente</h5>
+              <button class="btn btn-sm btn-outline-primary">Ver todo</button>
+            </div>
+            <ul class="list-group list-group-flush mt-3">
+              <li class="list-group-item">✅ Se creó el partido <strong>Monterrey vs Tigres</strong> (25 Oct, 18:00).</li>
+              <li class="list-group-item">✏️ Se actualizó el equipo <strong>América</strong> (logo y entrenador).</li>
+              <li class="list-group-item">📰 Nueva noticia publicada: <strong>“Goleadores del Apertura”</strong>.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- EQUIPOS -->
+        <section id="teamsSection" class="section d-none mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4 class="section-title mb-0">Equipos</h4>
+            <div class="d-flex gap-2">
+              <input type="text" class="form-control" placeholder="Buscar equipo..." id="searchTeams" style="max-width:240px;">
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTeam"><i class="bi bi-plus-lg me-1"></i>Nuevo equipo</button>
+            </div>
+          </div>
+          <div class="card-soft p-0">
+            <div class="table-responsive">
+              <table class="table align-middle mb-0">
+                <thead><tr><th>Logo</th><th>Nombre</th><th>Entrenador</th><th>Estadio</th><th class="text-end">Acciones</th></tr></thead>
+                <tbody id="tableTeams">
+                  <tr>
+                    <td><img src="https://upload.wikimedia.org/wikipedia/en/9/9e/Club_America_crest.png" width="36" height="36" alt="América"></td>
+                    <td>América</td>
+                    <td>André Jardine</td>
+                    <td>Azteca</td>
+                    <td class="text-end">
+                      <button class="btn btn-sm btn-outline-secondary" data-edit-team='{"id":1,"nombre":"América","entrenador":"André Jardine","estadio":"Azteca"}'><i class="bi bi-pencil"></i></button>
+                      <button class="btn btn-sm btn-outline-danger" data-delete="team"><i class="bi bi-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><img src="https://upload.wikimedia.org/wikipedia/en/5/5c/Tigres_Logo.svg" width="36" height="36" alt="Tigres"></td>
+                    <td>Tigres</td>
+                    <td>Robert Dante Siboldi</td>
+                    <td>Universitario</td>
+                    <td class="text-end">
+                      <button class="btn btn-sm btn-outline-secondary" data-edit-team='{"id":2,"nombre":"Tigres","entrenador":"Robert Dante Siboldi","estadio":"Universitario"}'><i class="bi bi-pencil"></i></button>
+                      <button class="btn btn-sm btn-outline-danger" data-delete="team"><i class="bi bi-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- JUGADORES -->
+        <section id="playersSection" class="section d-none mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4 class="section-title mb-0">Jugadores</h4>
+            <div class="d-flex gap-2">
+              <input type="text" class="form-control" placeholder="Buscar jugador..." id="searchPlayers" style="max-width:240px;">
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPlayer"><i class="bi bi-plus-lg me-1"></i>Nuevo jugador</button>
+            </div>
+          </div>
+          <div class="card-soft p-0">
+            <div class="table-responsive">
+              <table class="table align-middle mb-0">
+                <thead><tr><th>Foto</th><th>Nombre</th><th>Equipo</th><th>Posición</th><th>#</th><th class="text-end">Acciones</th></tr></thead>
+                <tbody id="tablePlayers">
+                  <tr>
+                    <td><img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Generic_profile_image.png" width="36" height="36"></td>
+                    <td>Henry Martín</td>
+                    <td>América</td>
+                    <td>Delantero</td>
+                    <td>21</td>
+                    <td class="text-end">
+                      <button class="btn btn-sm btn-outline-secondary" data-edit-player='{"id":1,"nombre":"Henry Martín","equipo":"América","posicion":"Delantero","numero":21}'><i class="bi bi-pencil"></i></button>
+                      <button class="btn btn-sm btn-outline-danger" data-delete="player"><i class="bi bi-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Generic_profile_image.png" width="36" height="36"></td>
+                    <td>André-Pierre Gignac</td>
+                    <td>Tigres</td>
+                    <td>Delantero</td>
+                    <td>10</td>
+                    <td class="text-end">
+                      <button class="btn btn-sm btn-outline-secondary" data-edit-player='{"id":2,"nombre":"André-Pierre Gignac","equipo":"Tigres","posicion":"Delantero","numero":10}'><i class="bi bi-pencil"></i></button>
+                      <button class="btn btn-sm btn-outline-danger" data-delete="player"><i class="bi bi-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- PARTIDOS -->
+        <section id="matchesSection" class="section d-none mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4 class="section-title mb-0">Partidos</h4>
+            <div class="d-flex gap-2">
+              <input type="text" class="form-control" placeholder="Buscar partido..." id="searchMatches" style="max-width:240px;">
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalMatch"><i class="bi bi-plus-lg me-1"></i>Nuevo partido</button>
+            </div>
+          </div>
+          <div class="card-soft p-0">
+            <div class="table-responsive">
+              <table class="table align-middle mb-0">
+                <thead>
+                  <tr><th>Fecha</th><th>Local</th><th>Visitante</th><th>Sede</th><th>Estado</th><th class="text-end">Acciones</th></tr>
+                </thead>
+                <tbody id="tableMatches">
+                  <tr>
+                    <td>2025-10-19 · 20:00</td>
+                    <td>América</td>
+                    <td>Pumas</td>
+                    <td>Azteca</td>
+                    <td><span class="badge rounded-pill text-bg-primary badge-status">Próximo</span></td>
+                    <td class="text-end">
+                      <button class="btn btn-sm btn-outline-secondary" data-edit-match='{"id":1,"fecha":"2025-10-19T20:00","local":"América","visitante":"Pumas","sede":"Azteca","estado":"Proximo","golesLocal":"","golesVisitante":""}'><i class="bi bi-pencil"></i></button>
+                      <button class="btn btn-sm btn-outline-danger" data-delete="match"><i class="bi bi-trash"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>2025-10-25 · 18:00</td>
+                    <td>Monterrey</td>
+                    <td>Tigres</td>
+                    <td>BBVA</td>
+                    <td><span class="badge rounded-pill text-bg-secondary badge-status">Finalizado</span></td>
+                    <td class="text-end">
+                      <button class="btn btn-sm btn-outline-secondary" data-edit-match='{"id":2,"fecha":"2025-10-25T18:00","local":"Monterrey","visitante":"Tigres","sede":"BBVA","estado":"Finalizado","golesLocal":1,"golesVisitante":1}'><i class="bi bi-pencil"></i></button>
+                      <button class="btn btn-sm btn-outline-danger" data-delete="match"><i class="bi bi-trash"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- NOTICIAS (placeholder corto) -->
+        <section id="newsSection" class="section d-none mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4 class="section-title mb-0">Noticias</h4>
+            <button class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Nueva noticia</button>
+          </div>
+          <div class="card-soft p-3">
+            <p class="text-muted mb-0">Aquí podrás crear, editar y publicar noticias relacionadas con equipos o jugadores.</p>
+          </div>
+        </section>
+
+        <!-- USUARIOS (placeholder corto) -->
+        <section id="usersSection" class="section d-none mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4 class="section-title mb-0">Usuarios</h4>
+            <button class="btn btn-primary"><i class="bi bi-person-plus me-1"></i>Nuevo usuario</button>
+          </div>
+          <div class="card-soft p-3">
+            <p class="text-muted mb-0">Administra roles (admin/editor), restablece contraseñas y estados de cuenta.</p>
+          </div>
+        </section>
+
+        <!-- CONFIGURACIÓN (placeholder corto) -->
+        <section id="settingsSection" class="section d-none mt-4">
+          <h4 class="section-title mb-2">Configuración</h4>
+          <div class="card-soft p-3">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="confRegister" checked>
+              <label class="form-check-label" for="confRegister">Permitir registros de usuarios</label>
+            </div>
+            <div class="form-check form-switch mt-2">
+              <input class="form-check-input" type="checkbox" id="confNews" checked>
+              <label class="form-check-label" for="confNews">Permitir comentarios en noticias</label>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALES -->
+  <!-- Equipo -->
+  <div class="modal fade" id="modalTeam" tabindex="-1">
+    <div class="modal-dialog">
+      <form class="modal-content needs-validation" novalidate id="formTeam">
+        <div class="modal-header">
+          <h5 class="modal-title">Nuevo equipo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="id">
+          <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" class="form-control" name="nombre" required>
+            <div class="invalid-feedback">Ingresa el nombre.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Entrenador</label>
+            <input type="text" class="form-control" name="entrenador" required>
+            <div class="invalid-feedback">Ingresa el entrenador.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Estadio</label>
+            <input type="text" class="form-control" name="estadio" required>
+            <div class="invalid-feedback">Ingresa el estadio.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Logo (URL)</label>
+            <input type="url" class="form-control" name="logo">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn btn-primary" type="submit">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Jugador -->
+  <div class="modal fade" id="modalPlayer" tabindex="-1">
+    <div class="modal-dialog">
+      <form class="modal-content needs-validation" novalidate id="formPlayer">
+        <div class="modal-header">
+          <h5 class="modal-title">Nuevo jugador</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="id">
+          <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" class="form-control" name="nombre" required>
+            <div class="invalid-feedback">Ingresa el nombre.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Equipo</label>
+            <input type="text" class="form-control" name="equipo" required>
+            <div class="invalid-feedback">Ingresa el equipo.</div>
+          </div>
+          <div class="row">
+            <div class="col-7 mb-3">
+              <label class="form-label">Posición</label>
+              <select class="form-select" name="posicion" required>
+                <option value="">Selecciona...</option>
+                <option>Portero</option><option>Defensa</option><option>Mediocampista</option><option>Delantero</option>
+              </select>
+              <div class="invalid-feedback">Selecciona una posición.</div>
+            </div>
+            <div class="col-5 mb-3">
+              <label class="form-label">Número</label>
+              <input type="number" class="form-control" name="numero" required min="1" max="99">
+              <div class="invalid-feedback">Ingresa un número válido.</div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Foto (URL)</label>
+            <input type="url" class="form-control" name="foto">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn btn-primary" type="submit">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Partido -->
+  <div class="modal fade" id="modalMatch" tabindex="-1">
+    <div class="modal-dialog">
+      <form class="modal-content needs-validation" novalidate id="formMatch">
+        <div class="modal-header">
+          <h5 class="modal-title">Nuevo partido</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="id">
+          <div class="mb-3">
+            <label class="form-label">Fecha y hora</label>
+            <input type="datetime-local" class="form-control" name="fecha" required>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Local</label>
+              <input type="text" class="form-control" name="local" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Visitante</label>
+              <input type="text" class="form-control" name="visitante" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Sede</label>
+            <input type="text" class="form-control" name="sede" required>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Estado</label>
+              <select class="form-select" name="estado" required>
+                <option value="">Selecciona...</option>
+                <option>Próximo</option>
+                <option>En vivo</option>
+                <option>Finalizado</option>
+              </select>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Goles (Local)</label>
+              <input type="number" class="form-control" name="golesLocal" min="0">
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Goles (Visitante)</label>
+              <input type="number" class="form-control" name="golesVisitante" min="0">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn btn-primary" type="submit">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal genérico eliminar -->
+  <div class="modal fade" id="modalDelete" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">Confirmar eliminación</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">Esta acción no se puede deshacer. ¿Deseas continuar?</div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn btn-danger" id="btnConfirmDelete">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // -------- Navegación de secciones ----------
+    const links = document.querySelectorAll('.sidebar-link');
+    const sections = document.querySelectorAll('.section');
+    links.forEach(l => l.addEventListener('click', (e) => {
+      e.preventDefault();
+      links.forEach(a => a.classList.remove('active'));
+      l.classList.add('active');
+      const id = l.getAttribute('data-target');
+      sections.forEach(s => s.classList.add('d-none'));
+      document.querySelector(id).classList.remove('d-none');
+    }));
+
+    // -------- Validación Bootstrap ----------
+    (() => {
+      const forms = document.querySelectorAll('.needs-validation');
+      Array.from(forms).forEach(form => {
+        form.addEventListener('submit', (event) => {
+          if (!form.checkValidity()) {
+            event.preventDefault(); event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      });
+    })();
+
+    // -------- Editar desde tabla (Equipos/Jugadores/Partidos) ----------
+    const modalTeam = document.getElementById('modalTeam');
+    const formTeam = document.getElementById('formTeam');
+    document.querySelectorAll('[data-edit-team]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const data = JSON.parse(btn.getAttribute('data-edit-team'));
+        modalTeam.querySelector('.modal-title').textContent = 'Editar equipo';
+        formTeam.nombre.value = data.nombre;
+        formTeam.entrenador.value = data.entrenador;
+        formTeam.estadio.value = data.estadio;
+        formTeam.id.value = data.id;
+        new bootstrap.Modal(modalTeam).show();
+      });
+    });
+    modalTeam.addEventListener('hidden.bs.modal', () => {
+      modalTeam.querySelector('.modal-title').textContent = 'Nuevo equipo';
+      formTeam.reset(); formTeam.classList.remove('was-validated');
+    });
+
+    const modalPlayer = document.getElementById('modalPlayer');
+    const formPlayer = document.getElementById('formPlayer');
+    document.querySelectorAll('[data-edit-player]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const d = JSON.parse(btn.getAttribute('data-edit-player'));
+        modalPlayer.querySelector('.modal-title').textContent = 'Editar jugador';
+        formPlayer.nombre.value = d.nombre;
+        formPlayer.equipo.value = d.equipo;
+        formPlayer.posicion.value = d.posicion;
+        formPlayer.numero.value = d.numero;
+        formPlayer.id.value = d.id;
+        new bootstrap.Modal(modalPlayer).show();
+      });
+    });
+    modalPlayer.addEventListener('hidden.bs.modal', () => {
+      modalPlayer.querySelector('.modal-title').textContent = 'Nuevo jugador';
+      formPlayer.reset(); formPlayer.classList.remove('was-validated');
+    });
+
+    const modalMatch = document.getElementById('modalMatch');
+    const formMatch = document.getElementById('formMatch');
+    document.querySelectorAll('[data-edit-match]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const d = JSON.parse(btn.getAttribute('data-edit-match'));
+        modalMatch.querySelector('.modal-title').textContent = 'Editar partido';
+        formMatch.id.value = d.id;
+        formMatch.fecha.value = d.fecha;
+        formMatch.local.value = d.local;
+        formMatch.visitante.value = d.visitante;
+        formMatch.sede.value = d.sede;
+        formMatch.estado.value = (d.estado || '').replace('Proximo','Próximo');
+        formMatch.golesLocal.value = d.golesLocal ?? '';
+        formMatch.golesVisitante.value = d.golesVisitante ?? '';
+        new bootstrap.Modal(modalMatch).show();
+      });
+    });
+    modalMatch.addEventListener('hidden.bs.modal', () => {
+      modalMatch.querySelector('.modal-title').textContent = 'Nuevo partido';
+      formMatch.reset(); formMatch.classList.remove('was-validated');
+    });
+
+    // -------- Eliminar genérico ----------
+    let pendingDelete = null;
+    const deleteModal = new bootstrap.Modal(document.getElementById('modalDelete'));
+    document.querySelectorAll('[data-delete]').forEach(btn => {
+      btn.addEventListener('click', () => { pendingDelete = btn; deleteModal.show(); });
+    });
+    document.getElementById('btnConfirmDelete').addEventListener('click', () => {
+      // TODO: reemplazar por petición a backend
+      const row = pendingDelete.closest('tr');
+      row.parentNode.removeChild(row);
+      deleteModal.hide();
+    });
+
+    // -------- Búsquedas simples (front) ----------
+    const simpleFilter = (inputId, tableId) => {
+      const q = document.getElementById(inputId);
+      const tbody = document.getElementById(tableId);
+      if (!q || !tbody) return;
+      q.addEventListener('input', () => {
+        const term = q.value.toLowerCase();
+        Array.from(tbody.querySelectorAll('tr')).forEach(tr => {
+          tr.style.display = tr.innerText.toLowerCase().includes(term) ? '' : 'none';
+        });
+      });
+    };
+    simpleFilter('searchTeams', 'tableTeams');
+    simpleFilter('searchPlayers', 'tablePlayers');
+    simpleFilter('searchMatches', 'tableMatches');
+
+    // -------- TODO: Enviar formularios al backend ----------
+    // formTeam.addEventListener('submit', (e) => { e.preventDefault(); /* fetch('/api/equipos', {method:'POST', body: ...}) */ });
+    // formPlayer.addEventListener('submit', (e) => { e.preventDefault(); /* fetch('/api/jugadores', {method:'POST', body: ...}) */ });
+    // formMatch.addEventListener('submit', (e) => { e.preventDefault(); /* fetch('/api/partidos', {method:'POST', body: ...}) */ });
+  </script>
+</body>
+</html>
