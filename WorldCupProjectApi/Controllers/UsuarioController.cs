@@ -28,13 +28,11 @@ namespace WorldCupProjectApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UsuarioDto>> GetUsuario(string id)
         {
-            // Using BaseService method!
             var usuario = await _usuarioService.GetByIdAsync(id);
             if (usuario == null) return NotFound();
             return Ok(MapToDto(usuario));
         }
-
-        // POST: api/usuarios
+        
         [HttpPost]
         public async Task<ActionResult<UsuarioDto>> CreateUsuario([FromBody] CreateUsuarioDto createDto)
         {
@@ -48,7 +46,7 @@ namespace WorldCupProjectApi.Controllers
                 Rol = createDto.Rol
             };
 
-            // Using BaseService method!
+            
             await _usuarioService.CreateAsync(usuario);
 
             return CreatedAtAction(nameof(GetUsuario), new { id = usuario.Id }, MapToDto(usuario));
@@ -65,17 +63,14 @@ namespace WorldCupProjectApi.Controllers
             return Ok(MapToDto(userUpdateInfo));
         }
         
-
-        // DELETE: api/usuarios/5
+        
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteUsuario(string id)
         {
-            // Using BaseService method!
             await _usuarioService.DeleteAsync(id);
             return NoContent();
         }
-
-        // Helper method to convert to DTO
+        
         private UsuarioDto MapToDto(Usuario usuario)
         {
             return new UsuarioDto

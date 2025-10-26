@@ -57,10 +57,10 @@ public class EquipoController: ControllerBase
         return Ok(dtos);
     }
     
-    [HttpGet("top/{topN}")]
-    public async Task<ActionResult<List<EquipoDto>>> GetTopEquipos(int topN)
+    [HttpGet("top/{limitN}")]
+    public async Task<ActionResult<List<EquipoDto>>> GetTopEquipos(int limitN)
     {
-        var equipos = await _equipoService.GetTopTeamsAsync(topN);
+        var equipos = await _equipoService.GetTopTeamsAsync(limitN);
         var dtos = equipos.Select(e => MapToDto(e)).ToList();
         return Ok(dtos);
     }
@@ -90,7 +90,7 @@ public class EquipoController: ControllerBase
                 SiglasEquipo = createDto.SiglasEquipo,
                 Grupo = createDto.Grupo,
                 RankingFifa = createDto.RankingFifa,
-                Jugadores = jugadores// Start with empty players list
+                Jugadores = jugadores
             };
 
             await _equipoService.CreateAsync(equipo);
@@ -125,7 +125,7 @@ public class EquipoController: ControllerBase
 
         // JUGADORES ENDPOINTS
 
-        // POST: api/equipo/5/jugadores
+    
         [HttpPost("jugador/{siglasEquipo}")]
         public async Task<ActionResult> AddJugador(string siglasEquipo, [FromBody] JugadorDto jugadorDto)
         {
@@ -142,7 +142,7 @@ public class EquipoController: ControllerBase
             return NoContent();
         }
 
-        // DELETE: api/equipo/5/jugadores/123
+    
         [HttpDelete("{siglasEquipo}/jugadores/{jugadorId}")]
         public async Task<ActionResult> RemoveJugador(string siglasEquipo, string jugadorId)
         {
@@ -150,7 +150,7 @@ public class EquipoController: ControllerBase
             return NoContent();
         }
 
-        // GET: api/equipo/5/jugadores
+        
         [HttpGet("{id}/jugadores")]
         public async Task<ActionResult<List<JugadorDto>>> GetJugadores(string id)
         {
@@ -170,7 +170,7 @@ public class EquipoController: ControllerBase
             return Ok(jugadoresDto);
         }
 
-        // GET: api/equipo/5/jugadores/numero/10
+    
         [HttpGet("{equipoId}/jugadores/numero/{numeroCamiseta}")]
         public async Task<ActionResult<JugadorDto>> GetJugadorByNumber(string equipoId, int numeroCamiseta)
         {

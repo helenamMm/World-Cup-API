@@ -39,7 +39,7 @@ public class Partido
     public string Fase { get; set; } // FASE_GRUPOS, OCTAVOS, CUARTOS, SEMIFINAL, FINAL
 
     [BsonElement("grupo")]
-    public string Grupo { get; set; } // A, B, C, D, E, F, G, H (only for group phase)
+    public string Grupo { get; set; } // A, B, C, D, E, F, G, H (SOLO PARA FASE DE GRUPOS)
 
     [BsonElement("arbitro_principal")]
     public string ArbitroPrincipal { get; set; }
@@ -52,7 +52,7 @@ public class Partido
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTime FechaActualizacion { get; set; } = DateTime.UtcNow;
 
-    // Navigation properties (not stored in MongoDB)
+    //importante para actualizar marcador
     [BsonIgnore]
     public Equipo EquipoA { get; set; }
 

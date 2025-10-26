@@ -8,7 +8,6 @@ public class EquipoService: BaseService<Equipo>
     {
     }
     
-    // Custom methods for Equipo
     public async Task<Equipo> GetBySiglasAsync(string siglas)
     {
         return await _collection.Find(e => e.SiglasEquipo == siglas).FirstOrDefaultAsync();
@@ -24,15 +23,14 @@ public class EquipoService: BaseService<Equipo>
         return await _collection.Find(e => e.RankingFifa >= minRanking && e.RankingFifa <= maxRanking).ToListAsync();
     }
 
-    public async Task<List<Equipo>> GetTopTeamsAsync(int topN)
+    public async Task<List<Equipo>> GetTopTeamsAsync(int limitN)
     {
         return await _collection.Find(_ => true)
             .SortBy(e => e.RankingFifa)
-            .Limit(topN)
+            .Limit(limitN)
             .ToListAsync();
     }
-
-    // Player management methods
+    
     public async Task AddJugadorAsync(string siglasEquipo, Jugador jugador)
     {
         var update = Builders<Equipo>.Update.AddToSet(e => e.Jugadores, jugador);

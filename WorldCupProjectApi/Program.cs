@@ -15,6 +15,7 @@ public class Program
         builder.Services.AddSingleton<UsuarioService>();
         builder.Services.AddSingleton<EquipoService>();
         builder.Services.AddSingleton<PartidoService>();
+        
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
