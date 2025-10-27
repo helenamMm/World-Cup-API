@@ -23,53 +23,96 @@ namespace WorldCupProjectApi.Controllers;
             _partidoService = partidoService;
         }
         
+        // Validation helper methods
+        private async Task<ActionResult> ValidateUsuarioAsync(string usuarioId)
+        {
+            if (string.IsNullOrEmpty(usuarioId))
+                return BadRequest(new { message = "Usuario es requerido" });
+            
+            bool usuarioExiste = await _usuarioService.ExistsAsync(usuarioId);
+            if (!usuarioExiste)
+                return NotFound(new { message = "Usuario no encontrado" });
+            
+            return null; // no hubo errores
+        }
+        
+        private async Task<ActionResult> ValidateEquipoAsync(string equipoId)
+        {
+            if (string.IsNullOrEmpty(equipoId))
+                return BadRequest(new { message = "Equipo es requerido" });
+            
+            var equipo = await _equipoService.GetByIdAsync(equipoId);
+            if (equipo == null)
+                return NotFound(new { message = "Equipo no encontrado" });
+            
+            return null; 
+        }
+    
+        private async Task<ActionResult> ValidatePartidoAsync(string partidoId)
+        {
+            if (string.IsNullOrEmpty(partidoId))
+                return BadRequest(new { message = "Partido es requerido" });
+            
+            var partido = await _partidoService.GetByIdAsync(partidoId);
+            if (partido == null)
+                return NotFound(new { message = "Partido no encontrado" });
+            
+            return null; 
+        }
+    
+        private async Task<ActionResult> ValidateUsuarioAndEquipoAsync(string usuarioId, string equipoId)
+        {
+            var usuarioValidation = await ValidateUsuarioAsync(usuarioId);
+            if (usuarioValidation != null) return usuarioValidation;
+        
+            var equipoValidation = await ValidateEquipoAsync(equipoId);
+            if (equipoValidation != null) return equipoValidation;
+        
+            return null; 
+        }
+    
+        private async Task<ActionResult> ValidateUsuarioAndPartidoAsync(string usuarioId, string partidoId)
+        {
+            var usuarioValidation = await ValidateUsuarioAsync(usuarioId);
+            if (usuarioValidation != null) return usuarioValidation;
+        
+            var partidoValidation = await ValidatePartidoAsync(partidoId);
+            if (partidoValidation != null) return partidoValidation;
+        
+            return null; 
+        }
+        
         [HttpGet("equipos/{usuarioId}")]
         public async Task<ActionResult<List<Equipo>>> GetEquiposFavoritos(string usuarioId)
         {
-            if(string.IsNullOrEmpty(usuarioId))
-                return BadRequest(new {message = "Usuario es requerido"});
-            
+            var validation = await ValidateUsuarioAsync(usuarioId);
+            if (validation != null) return validation;
             try
             {
-                bool usuarioExiste = await _usuarioService.ExistsAsync(usuarioId);
-                if (!usuarioExiste)
-                    return NotFound(new {message = "Usuario no encontrado"});
-                
                 var equipoIds = await _usuarioService.GetEquiposFavoritosAsync(usuarioId);
 
                 if (equipoIds == null || !equipoIds.Any())
                     return Ok(new {message = "El usuario aun no tiene equipos favoritos"});
 
-                var equipos = new List<Equipo>();
-                foreach (var equipoId in equipoIds)
-                {
-                    var equipo = await _equipoService.GetByIdAsync(equipoId);
-                    if (equipo != null)
-                        equipos.Add(equipo);
-                }
-
-                var equiposDto = equipos.Select(MapToEquipoFavoritoDto).ToList();
+                var equipos = await _equipoService.GetAllAsync();
+                var equiposFavoritos = equipos.Where(e => equipoIds.Contains(e.Id));
+                
+                var equiposDto = equiposFavoritos.Select(MapToEquipoFavoritoDto).ToList();
                 return Ok(equiposDto);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"error interno del servidor: {ex.Message}");
             }
-            
-            
         }
         
         [HttpGet("partidos/{usuarioId}")]
         public async Task<ActionResult<List<Partido>>> GetPartidosFavoritos(string usuarioId)
         {
-            if(string.IsNullOrEmpty(usuarioId))
-                return BadRequest(new {message = "Usuario es requerido"});
+            var validation = await ValidateUsuarioAsync(usuarioId);
+            if (validation != null) return validation;
             try
             {
-                bool usuarioExiste = await _usuarioService.ExistsAsync(usuarioId);
-                if (!usuarioExiste)
-                    return NotFound(new {message = "Usuario no encontrado"});
-                
                 var partidoIds = await _usuarioService.GetPartidosFavoritosAsync(usuarioId);
                 
                 if (partidoIds == null || !partidoIds.Any())
@@ -89,16 +132,8 @@ namespace WorldCupProjectApi.Controllers;
         [HttpPost("equipos/{equipoId}/{usuarioId}")]
         public async Task<ActionResult> AddEquipoFavorito(string equipoId, string usuarioId)
         {
-            if(string.IsNullOrEmpty(usuarioId) || string.IsNullOrEmpty(equipoId))
-                return BadRequest(new {message = "Usuario y equipo es requerido"});
-            
-            bool usuarioExiste = await _usuarioService.ExistsAsync(usuarioId);
-            if (!usuarioExiste)
-                return NotFound(new {message = "Usuario no encontrado"});
-            
-            var equipo = await _equipoService.GetByIdAsync(equipoId);
-            if (equipo == null)
-                return NotFound(new {message = "Equipo no encontrado"});
+            var validation = await ValidateUsuarioAndEquipoAsync(usuarioId, equipoId);
+            if (validation != null) return validation;
             
             var alreadyFavorite = await _usuarioService.IsEquipoFavoritoAsync(usuarioId, equipoId);
             if (alreadyFavorite)
@@ -115,16 +150,8 @@ namespace WorldCupProjectApi.Controllers;
         [HttpDelete("equipos/{equipoId}/{usuarioId}")]
         public async Task<ActionResult> RemoveEquipoFavorito(string equipoId, string usuarioId)
         {
-            if(string.IsNullOrEmpty(usuarioId) || string.IsNullOrEmpty(equipoId))
-                return BadRequest(new {message = "Usuario y equipo son requeridos"});
-            
-            bool usuarioExiste = await _usuarioService.ExistsAsync(usuarioId);
-            if (!usuarioExiste)
-                return NotFound(new {message = "Usuario no encontrado"});
-            
-            var equipo = await _equipoService.GetByIdAsync(equipoId);
-            if (equipo == null)
-                return NotFound(new {message = "Equipo no encontrado"});
+            var validation = await ValidateUsuarioAndEquipoAsync(usuarioId, equipoId);
+            if (validation != null) return validation;
             
             var isFavorite = await _usuarioService.IsEquipoFavoritoAsync(usuarioId, equipoId);
             if (!isFavorite)
@@ -140,17 +167,9 @@ namespace WorldCupProjectApi.Controllers;
         [HttpPost("partidos/{partidoId}/{usuarioId}")]
         public async Task<ActionResult> AddPartidoFavorito(string partidoId, string usuarioId)
         {
-            if(string.IsNullOrEmpty(usuarioId) || string.IsNullOrEmpty(partidoId))
-                return BadRequest(new {message = "Usuario y equipo es requerido"});
-            
-            bool usuarioExiste = await _usuarioService.ExistsAsync(usuarioId);
-            if (!usuarioExiste)
-                return NotFound(new {message = "Usuario no encontrado"});
-            
-            var partido = await _partidoService.GetByIdAsync(partidoId);
-            if (partido == null)
-                return NotFound("Partido no encontrado");
-
+           var validationn = await ValidateUsuarioAndPartidoAsync(usuarioId, partidoId);
+           if(validationn != null) return validationn;
+           
             var isFavorite = await _usuarioService.IsPartidoFavoritoAsync(usuarioId, partidoId);
             if (isFavorite)
                 return Ok(new { message = "El partido ya está en favoritos" });
@@ -165,16 +184,8 @@ namespace WorldCupProjectApi.Controllers;
         [HttpDelete("partidos/{partidoId}/{usuarioId}")]
         public async Task<ActionResult> RemovePartidoFavorito(string partidoId, string usuarioId)
         {
-            if(string.IsNullOrEmpty(usuarioId) || string.IsNullOrEmpty(partidoId))
-                return BadRequest(new {message = "Usuario y equipo es requerido"});
-            
-            bool usuarioExiste = await _usuarioService.ExistsAsync(usuarioId);
-            if (!usuarioExiste)
-                return NotFound(new {message = "Usuario no encontrado"});
-            
-            var partido = await _partidoService.GetByIdAsync(partidoId);
-            if (partido == null)
-                return NotFound("Partido no encontrado");
+            var validationn = await ValidateUsuarioAndPartidoAsync(usuarioId, partidoId);
+            if(validationn != null) return validationn;
 
             var isFavorite = await _usuarioService.IsPartidoFavoritoAsync(usuarioId, partidoId);
             if (!isFavorite)
@@ -189,17 +200,8 @@ namespace WorldCupProjectApi.Controllers;
         [HttpGet("equipos/{equipoId}/is-favorite/{usuarioId}")]
         public async Task<ActionResult<bool>> IsEquipoFavorito(string equipoId, string usuarioId)
         {
-            //validaciones de usuario
-            if(string.IsNullOrEmpty(usuarioId) || string.IsNullOrEmpty(equipoId))
-                return BadRequest(new {message = "Usuario y equipo es requerido"});
-            
-            bool usuarioExiste = await _usuarioService.ExistsAsync(usuarioId);
-            if (!usuarioExiste)
-                return NotFound(new {message = "Usuario no encontrado"});
-            
-            var equipo = await _equipoService.GetByIdAsync(equipoId);
-            if (equipo == null)
-                return NotFound(new {message = "Equipo no encontrado"});
+            var validationn = await ValidateUsuarioAndEquipoAsync(usuarioId, equipoId);
+            if(validationn != null) return validationn;
             
             var isFavorite = await _usuarioService.IsEquipoFavoritoAsync(usuarioId, equipoId);
             return Ok(isFavorite);
@@ -208,16 +210,8 @@ namespace WorldCupProjectApi.Controllers;
         [HttpGet("partidos/{partidoId}/is-favorite/{usuarioId}")]
         public async Task<ActionResult<bool>> IsPartidoFavorito(string partidoId, string usuarioId)
         {
-            if(string.IsNullOrEmpty(usuarioId) || string.IsNullOrEmpty(partidoId))
-                return BadRequest(new {message = "Usuario y equipo es requerido"});
-            
-            bool usuarioExiste = await _usuarioService.ExistsAsync(usuarioId);
-            if (!usuarioExiste)
-                return NotFound(new {message = "Usuario no encontrado"});
-            
-            var partido = await _partidoService.GetByIdAsync(partidoId);
-            if (partido == null)
-                return NotFound("Partido no encontrado");
+            var validationn = await ValidateUsuarioAndPartidoAsync(usuarioId, partidoId);
+            if(validationn != null) return validationn;
             
             var isFavorite = await _usuarioService.IsPartidoFavoritoAsync(usuarioId, partidoId);
             return Ok(isFavorite);
