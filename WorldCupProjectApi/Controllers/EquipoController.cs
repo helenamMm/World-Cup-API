@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using WorldCupProjectApi.DTOs;
 using WorldCupProjectApi.Services;
@@ -13,6 +14,19 @@ public class EquipoController: ControllerBase
    public EquipoController(EquipoService equipoService)
    {
       _equipoService = equipoService;
+   }
+   
+   private ActionResult CheckAdmin()
+   {
+       var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+    
+       if (string.IsNullOrEmpty(userRole))
+           return Unauthorized(new { message = "Usuario no autenticado" });
+    
+       if (userRole != "admin")
+           return StatusCode(403, new { message = "Se requieren permisos de administrador" });
+    
+       return null;
    }
    
     [HttpGet]

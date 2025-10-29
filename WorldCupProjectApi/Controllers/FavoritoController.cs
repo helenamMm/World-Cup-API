@@ -23,7 +23,6 @@ namespace WorldCupProjectApi.Controllers;
             _partidoService = partidoService;
         }
         
-        // Validation helper methods
         private async Task<ActionResult> ValidateUsuarioAsync(string usuarioId)
         {
             if (string.IsNullOrEmpty(usuarioId))

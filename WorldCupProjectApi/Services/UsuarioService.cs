@@ -59,6 +59,15 @@ namespace WorldCupProjectApi.Services
             return true;
         }   
 
+        public async Task<Usuario> ValidateCredentialsAsync(string email, string password)
+        {
+            var usuario = await GetByEmailAsync(email);
+            
+            if (usuario == null || usuario.Contra != password)
+                return null;
+            
+            return usuario;
+        }
         public async Task<bool> RemoveEquipoFavoritoAsync(string usuarioId, string equipoId)
         {
             var usuario = await GetByIdAsync(usuarioId);
@@ -92,7 +101,7 @@ namespace WorldCupProjectApi.Services
             return true;
         }
 
-        public async Task<List<string>> GetEquiposFavoritosAsync(string usuarioId)
+        public async Task<List<string>> GetEquiposFavoritosAsync(string usuarioId) //Mandarlo a la verga
         {
             var usuario = await GetByIdAsync(usuarioId);
             return usuario?.Favoritos.Equipos ?? new List<string>();
