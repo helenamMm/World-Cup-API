@@ -10,10 +10,11 @@ namespace WorldCupProjectApi.Controllers
     public class UsuariosController : ControllerBase
     {
         private readonly UsuarioService _usuarioService;
-
-        public UsuariosController(UsuarioService usuarioService)
+        private readonly AuthService _authService;
+        public UsuariosController(UsuarioService usuarioService, AuthService authService)
         {
             _usuarioService = usuarioService;
+            _authService = authService; 
         }
         private async Task<ActionResult> ValidateUsuarioAsync(string usuarioId)
         {
@@ -42,11 +43,23 @@ namespace WorldCupProjectApi.Controllers
                 return BadRequest(ModelState);
 
             var usuario = await _usuarioService.ValidateCredentialsAsync(loginDto.Email, loginDto.Password);
-    
+            
             if (usuario == null)
                 return Unauthorized(new { message = "Credenciales inválidas" });
-    
-            return Ok(MapToDto(usuario));
+            
+            var response = new LoginResponseDto
+            {
+                Usuario = MapToDto(usuario),
+                Rol = usuario.Rol,
+                Message = "Login exitoso"
+            };
+                
+            if (usuario.Rol == "admin")
+            {
+                response.Token = await _authService.AuthenticateAsync(loginDto.Email, loginDto.Password);
+                response.Message = "Login exitoso como administrador";
+            }
+            return Ok(response);
         }
         
         [HttpGet("{id}")] 

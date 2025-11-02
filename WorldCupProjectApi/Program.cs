@@ -1,4 +1,7 @@
+using MongoDB.Driver.Core.Operations;
+using Microsoft.OpenApi.Models;
 using WorldCupProjectApi.Services;
+using WorldCupProjectApi.Middlewares;
 
 namespace WorldCupProjectApi;
 
@@ -15,11 +18,44 @@ public class Program
         builder.Services.AddSingleton<UsuarioService>();
         builder.Services.AddSingleton<EquipoService>();
         builder.Services.AddSingleton<PartidoService>();
+        builder.Services.AddSingleton<AuthService>();
         
-
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(c => 
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo 
+            { 
+                Title = "WorldCupProjectApi", 
+                Version = "v1",
+                Description = "API para el proyecto del Mundial de Fútbol"
+            });
+            
+            // Add JWT Bearer token support to Swagger
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            });
+            
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new string[] {}
+                }
+            });
+        });
 
         var app = builder.Build();
 
@@ -31,7 +67,7 @@ public class Program
         }
 
         app.UseHttpsRedirection();
-
+        app.UseMiddleware<AuthMiddleware>();
         app.UseAuthorization();
         app.MapControllers();
         app.Run();
