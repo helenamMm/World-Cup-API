@@ -124,5 +124,18 @@ namespace WorldCupProjectApi.Services
             var usuario = await GetByIdAsync(usuarioId);
             return usuario?.Favoritos.Partidos.Contains(partidoId) ?? false;
         }
+        
+        public async Task<List<string>> GetUsersToNotifyAsync(string partidoId, string eequipoAid, string eequipoBid)
+        {
+            var users = await _collection
+                .Find(u => 
+                    u.Favoritos.Partidos.Contains(partidoId) ||
+                    u.Favoritos.Equipos.Contains(eequipoAid) || 
+                    u.Favoritos.Equipos.Contains(eequipoBid)
+                )
+                .ToListAsync();
+
+            return users.Select(u => u.Correo).ToList();
+        }
     }
 }

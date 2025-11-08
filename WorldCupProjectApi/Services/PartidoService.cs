@@ -61,8 +61,8 @@ public class PartidoService :BaseService<Partido>
             var partido = await GetByIdAsync(partidoId);
             if (partido == null) return false;
 
-            partido.GolesEquipoA = golesA;
-            partido.GolesEquipoB = golesB;
+            partido.GolesEquipoA = partido.GolesEquipoA + golesA;
+            partido.GolesEquipoB = partido.GolesEquipoB + golesB;
             partido.FechaActualizacion = DateTime.UtcNow;
 
             await UpdateAsync(partidoId, partido);

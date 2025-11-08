@@ -115,7 +115,7 @@ namespace WorldCupProjectApi.Controllers
             var validation = await ValidateUsuarioAsync(id);
             if (validation != null) return validation;
             await _usuarioService.DeleteAsync(id);
-            return NoContent();
+            return Ok(new {message = "Usuario eliminado correctamente" });
         }
         
         private UsuarioDto MapToDto(Usuario usuario)
