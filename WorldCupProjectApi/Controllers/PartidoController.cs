@@ -176,7 +176,7 @@ public class PartidoController : ControllerBase
         public async Task<ActionResult> UpdateMarcador(string id, [FromBody] UpdateMarcadorDto updateDto)
         {
             var success = await _partidoService.ActualizarMarcadorAsync(id, updateDto.GolesEquipoA, updateDto.GolesEquipoB);
-            var partido = await  _partidoService.GetByIdAsync(id);
+            var partido = await  _partidoService.GetWithTeamsAsync(id);
             if (!success) return NotFound();
             var equipoAnotador = updateDto.GolesEquipoA > updateDto.GolesEquipoB? partido.EquipoA.Nombre : partido.EquipoB.Nombre;
             
@@ -189,9 +189,10 @@ public class PartidoController : ControllerBase
         public async Task<ActionResult> IniciarPartido(string id)
         {
             var success = await _partidoService.IniciarPartidoAsync(id);
-            var partido = await  _partidoService.GetByIdAsync(id);
+            var partido = await  _partidoService.GetWithTeamsAsync(id);
             if (!success) return NotFound();
-           await _notificationService.SendMatchUpdateNotificationAsync(partido, partido.Estado);
+
+            await _notificationService.SendMatchUpdateNotificationAsync(partido, partido.Estado);
             return CreatedAtAction(nameof(GetPartido), new { id = partido.Id }, MapToDto(partido));
         }
 

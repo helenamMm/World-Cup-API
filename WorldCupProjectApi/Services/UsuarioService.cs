@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices.JavaScript;
+using Microsoft.AspNetCore.Http.HttpResults;
 using MongoDB.Driver;
 using WorldCupProjectApi.DTOs;
 using WorldCupProjectApi.Models;
@@ -134,6 +135,7 @@ namespace WorldCupProjectApi.Services
                     u.Favoritos.Equipos.Contains(eequipoBid)
                 )
                 .ToListAsync();
+            if (users is null) return new List<string>();
 
             return users.Select(u => u.Correo).ToList();
         }

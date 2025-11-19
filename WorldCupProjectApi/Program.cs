@@ -1,5 +1,6 @@
 using MongoDB.Driver.Core.Operations;
 using Microsoft.OpenApi.Models;
+using Org.BouncyCastle.Pkix;
 using WorldCupProjectApi.Services;
 using WorldCupProjectApi.Middlewares;
 
@@ -19,6 +20,7 @@ public class Program
         builder.Services.AddSingleton<EquipoService>();
         builder.Services.AddSingleton<PartidoService>();
         builder.Services.AddSingleton<AuthService>();
+        builder.Services.AddSingleton<NotificationService>();
         
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

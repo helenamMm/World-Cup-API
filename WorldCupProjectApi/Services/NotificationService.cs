@@ -7,7 +7,7 @@ namespace WorldCupProjectApi.Services;
 public class NotificationService
 {
     private readonly EmailConfiguration _emailConfig;
-    private readonly List<string> _subscribedEmails;
+    //private List<string> _subscribedEmails;
     private readonly UsuarioService _usuarioService;
 
     public NotificationService(IConfiguration configuration, UsuarioService usuarioService)
@@ -23,26 +23,26 @@ public class NotificationService
         };
         
         _usuarioService = usuarioService;
-        _subscribedEmails = new List<string>();
+        //_subscribedEmails = new List<string>();
     }
     
-    private async Task SendBulkEmailAsync(List<string> _subscribedEmails, string subject, string body)
+    private async Task SendBulkEmailAsync(List<string> subscribedEmails, string subject, string body)
     {
-        var tasks = _subscribedEmails.Select(email => SendEmailAsync(email, subject, body));
+        var tasks = subscribedEmails.Select(email => SendEmailAsync(email, subject, body));
         await Task.WhenAll(tasks);
     }
 
     public async Task SendGoalNotificationAsync(Partido partido, string equipoAnotador, string jugador)
     {
-        var recipientEmails = await _usuarioService.GetUsersToNotifyAsync(
+         var subscribedEmails = await _usuarioService.GetUsersToNotifyAsync(
             partido.Id, 
             partido.EquipoA.Id, 
             partido.EquipoB.Id
         );
-
-        if (!recipientEmails.Any())
+        Console.WriteLine(subscribedEmails);
+        if (!subscribedEmails.Any())
         {
-            Console.WriteLine("No users to notify for this goal");
+            Console.WriteLine("No hay usuarios");
             return;
         }
         var subject = $"⚽ ¡GOOL! {equipoAnotador} ha anotado";
@@ -57,28 +57,33 @@ public class NotificationService
         <br/>
         <p>¡Sigue el partido en vivo en nuestra app!</p>";
 
-        await SendBulkEmailAsync(_subscribedEmails, subject, body);
+        await SendBulkEmailAsync(subscribedEmails, subject, body);
     }
     
     public async Task SendMatchUpdateNotificationAsync(Partido partido, string mensaje)
     {
-        var recipientEmails = await _usuarioService.GetUsersToNotifyAsync(
+        
+        var subscribedEmails  = await _usuarioService.GetUsersToNotifyAsync(
             partido.Id, 
             partido.EquipoA.Id, 
             partido.EquipoB.Id
         );
-        
-        var subject = $"📢 Actualización: {partido.EquipoA?.Nombre} vs {partido.EquipoB?.Nombre}";
+        if (!subscribedEmails.Any())
+        {
+            Console.WriteLine("No hay usuarios");
+            return;
+        }
+        var subject = $"📢 Hoy Juegan: {partido.EquipoA?.Nombre} vs {partido.EquipoB?.Nombre}";
         var body = $@"
-        <h2>📢 Actualización del Partido</h2>
-        <p><strong>{partido.EquipoA?.Nombre} {partido.GolesEquipoA} - {partido.GolesEquipoB} {partido.EquipoB?.Nombre}</strong></p>
+        <h2>📢 Partido de hoy</h2>
+        <p><strong>{partido.EquipoA?.Nombre}  - {partido.EquipoB?.Nombre}</strong></p>
         <p>{mensaje}</p>
         <p><strong>Estadio:</strong> {partido.Estadio}</p>
         <p><strong>Fase:</strong> {partido.Fase}</p>
         <br/>
         <p>¡No te lo pierdas!</p>";
 
-        await SendBulkEmailAsync(_subscribedEmails, subject, body);
+        await SendBulkEmailAsync(subscribedEmails, subject, body);
     }
     
     private async Task SendEmailAsync(string toEmail, string subject, string body)
