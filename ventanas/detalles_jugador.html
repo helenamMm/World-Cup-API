@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detalle del Jugador - Liga MX Portal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f4f6f9;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      background: linear-gradient(90deg, #0d6efd, #004aad);
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      font-size: 1.4rem;
+    }
+
+    /* PERFIL DEL JUGADOR */
+    .player-header {
+      background-color: #fff;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .player-photo {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid #0d6efd;
+    }
+
+    .player-info h2 {
+      font-weight: bold;
+      color: #0d6efd;
+    }
+
+    /* TARJETAS DE ESTADÍSTICAS Y DATOS */
+    .info-card {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* FOOTER */
+    footer {
+      background-color: #0d6efd;
+      color: white;
+      text-align: center;
+      padding: 1rem 0;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+    <div class="container">
+      <a class="navbar-brand" href="home.html">Liga MX Portal</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="home.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="equipos.html">Equipos</a></li>
+          <li class="nav-item"><a class="nav-link" href="jugadores.html">Jugadores</a></li>
+          <li class="nav-item"><a class="nav-link" href="partidos.html">Partidos</a></li>
+          <li class="nav-item"><a class="nav-link" href="perfil.html">Perfil</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="container">
+    <!-- Encabezado del jugador -->
+    <div class="player-header">
+      <img src="https://cdn.pixabay.com/photo/2015/05/28/12/22/soccer-787978_1280.jpg" class="player-photo" alt="Foto del jugador">
+      <div class="player-info">
+        <h2>Henry Martín</h2>
+        <p class="mb-1"><strong>Equipo:</strong> Club América</p>
+        <p class="mb-1"><strong>Posición:</strong> Delantero</p>
+        <p class="mb-1"><strong>Edad:</strong> 31 años</p>
+        <p class="mb-1"><strong>Nacionalidad:</strong> México 🇲🇽</p>
+        <p><strong>Número:</strong> #21</p>
+        <button class="btn btn-primary"><i class="bi bi-star-fill me-1"></i>Agregar a favoritos</button>
+      </div>
+    </div>
+
+    <!-- Estadísticas y Biografía -->
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="info-card">
+          <h4 class="fw-bold mb-3"><i class="bi bi-graph-up-arrow text-primary me-2"></i>Estadísticas de la temporada</h4>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">Partidos jugados: <strong>14</strong></li>
+            <li class="list-group-item">Goles: <strong>12</strong></li>
+            <li class="list-group-item">Asistencias: <strong>5</strong></li>
+            <li class="list-group-item">Minutos jugados: <strong>1,130</strong></li>
+            <li class="list-group-item">Tarjetas amarillas: <strong>2</strong></li>
+            <li class="list-group-item">Tarjetas rojas: <strong>0</strong></li>
+          </ul>
+        </div>
+
+        <div class="info-card mt-4">
+          <h4 class="fw-bold mb-3"><i class="bi bi-person-lines-fill text-primary me-2"></i>Biografía</h4>
+          <p class="mb-0">
+            Henry Martín es un futbolista mexicano que juega como delantero para el Club América en la Liga MX. 
+            Conocido por su velocidad, precisión y capacidad goleadora, ha sido una pieza clave en el ataque de su equipo. 
+            Ha representado a México en competencias internacionales y continúa siendo uno de los jugadores más destacados de la liga.
+          </p>
+        </div>
+      </div>
+
+      <!-- Datos adicionales -->
+      <div class="col-lg-4">
+        <div class="info-card mb-4">
+          <h5 class="fw-bold mb-3"><i class="bi bi-trophy-fill text-primary me-2"></i>Logros</h5>
+          <ul>
+            <li>Campeón de Liga MX 2023</li>
+            <li>Máximo goleador del torneo Apertura</li>
+            <li>Convocado a la Selección Mexicana</li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <h5 class="fw-bold mb-3"><i class="bi bi-calendar-event-fill text-primary me-2"></i>Próximos Partidos</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">América vs Pumas · 20 Oct 2025</li>
+            <li class="list-group-item">Monterrey vs América · 28 Oct 2025</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="mb-0">© 2025 Liga MX Portal - Todos los derechos reservados</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
