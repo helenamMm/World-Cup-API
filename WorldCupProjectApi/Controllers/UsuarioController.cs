@@ -10,13 +10,25 @@ namespace WorldCupProjectApi.Controllers
     public class UsuariosController : ControllerBase
     {
         private readonly UsuarioService _usuarioService;
-
-        public UsuariosController(UsuarioService usuarioService)
+        private readonly AuthService _authService;
+        public UsuariosController(UsuarioService usuarioService, AuthService authService)
         {
             _usuarioService = usuarioService;
+            _authService = authService; 
+        }
+        private async Task<ActionResult> ValidateUsuarioAsync(string usuarioId)
+        {
+            if (string.IsNullOrEmpty(usuarioId))
+                return BadRequest(new { message = "Usuario es requerido" });
+            
+            bool usuarioExiste = await _usuarioService.ExistsAsync(usuarioId);
+            if (!usuarioExiste)
+                return NotFound(new { message = "Usuario no encontrado" });
+            
+            return null; // no hubo errores
         }
         
-        [HttpGet]
+        [HttpGet] 
         public async Task<ActionResult<List<UsuarioDto>>> GetUsuarios()
         {
             var usuarios = await _usuarioService.GetAllAsync();
@@ -24,20 +36,52 @@ namespace WorldCupProjectApi.Controllers
             return Ok(dtos);
         }
 
+        [HttpPost("login")]
+        public async Task<ActionResult<UsuarioDto>> Login([FromBody] LoginDto loginDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var usuario = await _usuarioService.ValidateCredentialsAsync(loginDto.Email, loginDto.Password);
+            
+            if (usuario == null)
+                return Unauthorized(new { message = "Credenciales inválidas" });
+            
+            var response = new LoginResponseDto
+            {
+                Usuario = MapToDto(usuario),
+                Rol = usuario.Rol,
+                Message = "Login exitoso"
+            };
+                
+            if (usuario.Rol == "admin")
+            {
+                response.Token = await _authService.AuthenticateAsync(loginDto.Email, loginDto.Password);
+                response.Message = "Login exitoso como administrador";
+            }
+            return Ok(response);
+        }
         
-        [HttpGet("{id}")]
+        [HttpGet("{id}")] 
         public async Task<ActionResult<UsuarioDto>> GetUsuario(string id)
         {
-            // Using BaseService method!
+            var validation = await ValidateUsuarioAsync(id);
+            if (validation != null) return validation;
+            
             var usuario = await _usuarioService.GetByIdAsync(id);
-            if (usuario == null) return NotFound();
             return Ok(MapToDto(usuario));
         }
-
-        // POST: api/usuarios
-        [HttpPost]
+        
+        [HttpPost] 
         public async Task<ActionResult<UsuarioDto>> CreateUsuario([FromBody] CreateUsuarioDto createDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            bool emailExists = await _usuarioService.EmailExistsAsync(createDto.Correo);
+            if (emailExists)
+                return Conflict(new { message = "El correo ya está registrado" });
+            
             var usuario = new Usuario
             {
                 Nombre = createDto.Nombre,
@@ -48,7 +92,6 @@ namespace WorldCupProjectApi.Controllers
                 Rol = createDto.Rol
             };
 
-            // Using BaseService method!
             await _usuarioService.CreateAsync(usuario);
 
             return CreatedAtAction(nameof(GetUsuario), new { id = usuario.Id }, MapToDto(usuario));
@@ -65,17 +108,16 @@ namespace WorldCupProjectApi.Controllers
             return Ok(MapToDto(userUpdateInfo));
         }
         
-
-        // DELETE: api/usuarios/5
+        
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteUsuario(string id)
         {
-            // Using BaseService method!
+            var validation = await ValidateUsuarioAsync(id);
+            if (validation != null) return validation;
             await _usuarioService.DeleteAsync(id);
-            return NoContent();
+            return Ok(new {message = "Usuario eliminado correctamente" });
         }
-
-        // Helper method to convert to DTO
+        
         private UsuarioDto MapToDto(Usuario usuario)
         {
             return new UsuarioDto

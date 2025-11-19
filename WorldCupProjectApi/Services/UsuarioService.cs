@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices.JavaScript;
+using Microsoft.AspNetCore.Http.HttpResults;
 using MongoDB.Driver;
 using WorldCupProjectApi.DTOs;
 using WorldCupProjectApi.Models;
@@ -44,6 +45,99 @@ namespace WorldCupProjectApi.Services
             
             return existingUser;
 
+        }
+        
+        public async Task<bool> AddEquipoFavoritoAsync(string usuarioId, string equipoId)
+        {
+            var usuario = await GetByIdAsync(usuarioId);
+            if (usuario == null) return false;
+
+            if (!usuario.Favoritos.Equipos.Contains(equipoId))
+            {
+                usuario.Favoritos.Equipos.Add(equipoId);
+                await UpdateAsync(usuarioId, usuario);
+            }
+            return true;
+        }   
+
+        public async Task<Usuario> ValidateCredentialsAsync(string email, string password)
+        {
+            var usuario = await GetByEmailAsync(email);
+            
+            if (usuario == null || usuario.Contra != password)
+                return null;
+            
+            return usuario;
+        }
+        public async Task<bool> RemoveEquipoFavoritoAsync(string usuarioId, string equipoId)
+        {
+            var usuario = await GetByIdAsync(usuarioId);
+            if (usuario == null) return false;
+
+            usuario.Favoritos.Equipos.Remove(equipoId);
+            await UpdateAsync(usuarioId, usuario);
+            return true;
+        }
+
+        public async Task<bool> AddPartidoFavoritoAsync(string usuarioId, string partidoId)
+        {
+            var usuario = await GetByIdAsync(usuarioId);
+            if (usuario == null) return false;
+
+            if (!usuario.Favoritos.Partidos.Contains(partidoId))
+            {   
+                usuario.Favoritos.Partidos.Add(partidoId);
+                await UpdateAsync(usuarioId, usuario);
+            }
+            return true;
+        }
+
+        public async Task<bool> RemovePartidoFavoritoAsync(string usuarioId, string partidoId)
+        {
+            var usuario = await GetByIdAsync(usuarioId);
+            if (usuario == null) return false;
+
+            usuario.Favoritos.Partidos.Remove(partidoId);
+            await UpdateAsync(usuarioId, usuario);
+            return true;
+        }
+
+        public async Task<List<string>> GetEquiposFavoritosAsync(string usuarioId) //Mandarlo a la verga
+        {
+            var usuario = await GetByIdAsync(usuarioId);
+            return usuario?.Favoritos.Equipos ?? new List<string>();
+        }
+
+        public async Task<List<string>> GetPartidosFavoritosAsync(string usuarioId)
+        {
+            var usuario = await GetByIdAsync(usuarioId);
+            return usuario?.Favoritos.Partidos ?? new List<string>();
+        }
+
+        public async Task<bool> IsEquipoFavoritoAsync(string usuarioId, string equipoId)
+        {
+            var usuario = await GetByIdAsync(usuarioId);
+            return usuario?.Favoritos.Equipos.Contains(equipoId) ?? false;
+        }
+
+        public async Task<bool> IsPartidoFavoritoAsync(string usuarioId, string partidoId)
+        {
+            var usuario = await GetByIdAsync(usuarioId);
+            return usuario?.Favoritos.Partidos.Contains(partidoId) ?? false;
+        }
+        
+        public async Task<List<string>> GetUsersToNotifyAsync(string partidoId, string eequipoAid, string eequipoBid)
+        {
+            var users = await _collection
+                .Find(u => 
+                    u.Favoritos.Partidos.Contains(partidoId) ||
+                    u.Favoritos.Equipos.Contains(eequipoAid) || 
+                    u.Favoritos.Equipos.Contains(eequipoBid)
+                )
+                .ToListAsync();
+            if (users is null) return new List<string>();
+
+            return users.Select(u => u.Correo).ToList();
         }
     }
 }

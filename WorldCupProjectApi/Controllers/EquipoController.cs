@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using WorldCupProjectApi.DTOs;
 using WorldCupProjectApi.Services;
@@ -14,6 +15,19 @@ public class EquipoController: ControllerBase
    {
       _equipoService = equipoService;
    }
+   
+   // private ActionResult CheckAdmin() //Este no lo ocupo
+   // {
+   //     var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+   //  
+   //     if (string.IsNullOrEmpty(userRole))
+   //         return Unauthorized(new { message = "Usuario no autenticado" });
+   //  
+   //     if (userRole != "admin")
+   //         return StatusCode(403, new { message = "Se requieren permisos de administrador" });
+   //  
+   //     return null;
+   // }
    
     [HttpGet]
     public async Task<ActionResult<List<EquipoDto>>> GetEquipos()
@@ -57,10 +71,10 @@ public class EquipoController: ControllerBase
         return Ok(dtos);
     }
     
-    [HttpGet("top/{topN}")]
-    public async Task<ActionResult<List<EquipoDto>>> GetTopEquipos(int topN)
+    [HttpGet("top/{limitN}")]
+    public async Task<ActionResult<List<EquipoDto>>> GetTopEquipos(int limitN)
     {
-        var equipos = await _equipoService.GetTopTeamsAsync(topN);
+        var equipos = await _equipoService.GetTopTeamsAsync(limitN);
         var dtos = equipos.Select(e => MapToDto(e)).ToList();
         return Ok(dtos);
     }
@@ -120,11 +134,12 @@ public class EquipoController: ControllerBase
         public async Task<ActionResult> DeleteEquipo(string id)
         {
             await _equipoService.DeleteAsync(id);
-            return NoContent();
+            return Ok(new{message = "El equipo se ha eliminado correctamente"});
         }
 
         // JUGADORES ENDPOINTS
 
+    
         [HttpPost("jugador/{siglasEquipo}")]
         public async Task<ActionResult> AddJugador(string siglasEquipo, [FromBody] JugadorDto jugadorDto)
         {
@@ -138,16 +153,18 @@ public class EquipoController: ControllerBase
             };
 
             await _equipoService.AddJugadorAsync(siglasEquipo, jugador);
-            return NoContent();
+            return Ok(new {mesaage  = "El jugador se actualizo correctamente"});
         }
 
+    
         [HttpDelete("{siglasEquipo}/jugadores/{jugadorId}")]
         public async Task<ActionResult> RemoveJugador(string siglasEquipo, string jugadorId)
         {
             await _equipoService.RemoveJugadorAsync(siglasEquipo, jugadorId);
-            return NoContent();
+            return Ok(new {message = "El jugador se elimino correctamente"});
         }
 
+        
         [HttpGet("{id}/jugadores")]
         public async Task<ActionResult<List<JugadorDto>>> GetJugadores(string id)
         {
@@ -167,6 +184,7 @@ public class EquipoController: ControllerBase
             return Ok(jugadoresDto);
         }
 
+    
         [HttpGet("{equipoId}/jugadores/numero/{numeroCamiseta}")]
         public async Task<ActionResult<JugadorDto>> GetJugadorByNumber(string equipoId, int numeroCamiseta)
         {

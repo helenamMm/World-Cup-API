@@ -12,11 +12,13 @@ public class PartidoController : ControllerBase
 {
         private readonly PartidoService _partidoService;
         private readonly EquipoService _equipoService;
+        private readonly NotificationService _notificationService;
 
-        public PartidoController(PartidoService partidoService, EquipoService equipoService)
+        public PartidoController(PartidoService partidoService, EquipoService equipoService,  NotificationService notificationService)
         {
             _partidoService = partidoService;
             _equipoService = equipoService;
+            _notificationService = notificationService;
         }
         
         [HttpGet]
@@ -166,7 +168,7 @@ public class PartidoController : ControllerBase
             partido.FechaActualizacion = DateTime.UtcNow;
 
             await _partidoService.UpdateAsync(id, partido);
-            return NoContent();
+            return CreatedAtAction(nameof(GetPartido), new { id = partido.Id }, MapToDto(partido));
         }
 
     
@@ -174,8 +176,12 @@ public class PartidoController : ControllerBase
         public async Task<ActionResult> UpdateMarcador(string id, [FromBody] UpdateMarcadorDto updateDto)
         {
             var success = await _partidoService.ActualizarMarcadorAsync(id, updateDto.GolesEquipoA, updateDto.GolesEquipoB);
+            var partido = await  _partidoService.GetWithTeamsAsync(id);
             if (!success) return NotFound();
-            return NoContent();
+            var equipoAnotador = updateDto.GolesEquipoA > updateDto.GolesEquipoB? partido.EquipoA.Nombre : partido.EquipoB.Nombre;
+            
+            await _notificationService.SendGoalNotificationAsync( partido, equipoAnotador, updateDto.Jugador);
+            return CreatedAtAction(nameof(GetPartido), new { id = partido.Id }, MapToDto(partido));
         }
 
       
@@ -183,8 +189,11 @@ public class PartidoController : ControllerBase
         public async Task<ActionResult> IniciarPartido(string id)
         {
             var success = await _partidoService.IniciarPartidoAsync(id);
+            var partido = await  _partidoService.GetWithTeamsAsync(id);
             if (!success) return NotFound();
-            return NoContent();
+
+            await _notificationService.SendMatchUpdateNotificationAsync(partido, partido.Estado);
+            return CreatedAtAction(nameof(GetPartido), new { id = partido.Id }, MapToDto(partido));
         }
 
     
@@ -192,8 +201,9 @@ public class PartidoController : ControllerBase
         public async Task<ActionResult> FinalizarPartido(string id)
         {
             var success = await _partidoService.FinalizarPartidoAsync(id);
+            var partido = await  _partidoService.GetByIdAsync(id);
             if (!success) return NotFound();
-            return NoContent();
+            return CreatedAtAction(nameof(GetPartido), new { id = partido.Id }, MapToDto(partido));
         }
 
     
@@ -201,7 +211,7 @@ public class PartidoController : ControllerBase
         public async Task<ActionResult> DeletePartido(string id)
         {
             await _partidoService.DeleteAsync(id);
-            return NoContent();
+            return Ok(new { message = "Partido eliminado" });
         }
 
         
