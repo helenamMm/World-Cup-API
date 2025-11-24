@@ -11,7 +11,17 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
+        
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll",
+                policy =>
+                {
+                    policy.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+        });
         // Add services to the container.
         builder.Services.AddControllers();
         builder.Services.AddAuthorization();
@@ -60,7 +70,7 @@ public class Program
         });
 
         var app = builder.Build();
-
+        app.UseCors("AllowAll");
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
