@@ -18,23 +18,15 @@ public class AuthMiddleware
     {
         var path = context.Request.Path.ToString();
         var method = context.Request.Method;
-        
-        Console.WriteLine($"=== AUTH MIDDLEWARE ===");
-        Console.WriteLine($"Path: {path}");
-        Console.WriteLine($"Method: {method}");
-        Console.WriteLine($"Lower Path: {path.ToLower()}");
     
         bool isPublic = IsPublicRoute(context);
-        Console.WriteLine($"Is Public Route: {isPublic}");
-        Console.WriteLine($"=== END DEBUG ===");
         
         if (isPublic)
         {
-            Console.WriteLine("SKIPPING AUTH - Public route");
             await _next(context);
             return;
         }
-        Console.WriteLine("REQUIRING AUTH - Protected route");
+
         if (!context.Request.Headers.TryGetValue("Authorization", out var authHeader))
         {
             context.Response.StatusCode = 401;
@@ -68,7 +60,6 @@ public class AuthMiddleware
     {
         var path = context.Request.Path.ToString().ToLower();
         var method = context.Request.Method.ToUpper();
-        Console.WriteLine($"Checking if public: {path} [{method}]");
 
         if (path.StartsWith("/api/usuarios") || path.StartsWith("/api/favoritos"))
         {
