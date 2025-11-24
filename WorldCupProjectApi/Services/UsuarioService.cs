@@ -39,7 +39,7 @@ namespace WorldCupProjectApi.Services
             existingUser.Activo = updateInfo.Activo;
             
             await _collection.ReplaceOneAsync(
-                Builders<Usuario>.Filter.Eq(u => u.Correo, email), // Find by email
+                Builders<Usuario>.Filter.Eq(u => u.Correo, email),
                 existingUser 
             );
             
@@ -102,7 +102,7 @@ namespace WorldCupProjectApi.Services
             return true;
         }
 
-        public async Task<List<string>> GetEquiposFavoritosAsync(string usuarioId) //Mandarlo a la verga
+        public async Task<List<string>> GetEquiposFavoritosAsync(string usuarioId)
         {
             var usuario = await GetByIdAsync(usuarioId);
             return usuario?.Favoritos.Equipos ?? new List<string>();
