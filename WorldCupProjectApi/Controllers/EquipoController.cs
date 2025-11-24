@@ -16,19 +16,6 @@ public class EquipoController: ControllerBase
       _equipoService = equipoService;
    }
    
-   // private ActionResult CheckAdmin() //Este no lo ocupo
-   // {
-   //     var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
-   //  
-   //     if (string.IsNullOrEmpty(userRole))
-   //         return Unauthorized(new { message = "Usuario no autenticado" });
-   //  
-   //     if (userRole != "admin")
-   //         return StatusCode(403, new { message = "Se requieren permisos de administrador" });
-   //  
-   //     return null;
-   // }
-   
     [HttpGet]
     public async Task<ActionResult<List<EquipoDto>>> GetEquipos()
     {

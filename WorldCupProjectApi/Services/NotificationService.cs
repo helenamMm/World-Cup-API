@@ -7,7 +7,6 @@ namespace WorldCupProjectApi.Services;
 public class NotificationService
 {
     private readonly EmailConfiguration _emailConfig;
-    //private List<string> _subscribedEmails;
     private readonly UsuarioService _usuarioService;
 
     public NotificationService(IConfiguration configuration, UsuarioService usuarioService)
@@ -23,7 +22,6 @@ public class NotificationService
         };
         
         _usuarioService = usuarioService;
-        //_subscribedEmails = new List<string>();
     }
     
     private async Task SendBulkEmailAsync(List<string> subscribedEmails, string subject, string body)

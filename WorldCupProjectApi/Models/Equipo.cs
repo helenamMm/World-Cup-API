@@ -15,7 +15,7 @@ public class Equipo
     public string NombreCompletoPais { get; set; }
 
     [BsonElement("bandera")]
-    public string Bandera { get; set; } // URL to flag image
+    public string Bandera { get; set; }
 
     [BsonElement("informacion")]
     public string Informacion { get; set; }

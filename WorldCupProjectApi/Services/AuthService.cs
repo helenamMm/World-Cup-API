@@ -4,7 +4,6 @@ namespace WorldCupProjectApi.Services;
 
 public class AuthService
 {
-    //Guarda los tokens en la memoria y se resetean cuando se caducan 
         private readonly Dictionary<string, (Usuario user, DateTime expiry)> _tokens = new();
         private readonly UsuarioService _usuarioService;
 
@@ -15,7 +14,6 @@ public class AuthService
 
         public async Task<string?> AuthenticateAsync(string email, string password)
         {
-            //solamente para los usuarios administradores
             var usuario = await _usuarioService.ValidateCredentialsAsync(email, password);
             if (usuario == null || usuario.Rol != "admin")
                 return null;
@@ -29,12 +27,10 @@ public class AuthService
 
         public ClaimsPrincipal? ValidateToken(string token)
         {
-            // Clean expired tokens first
             CleanExpiredTokens();
 
             if (_tokens.TryGetValue(token, out var tokenData))
             {
-                // Create claims principal from user data
                 var claims = new[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, tokenData.user.Id),
@@ -58,7 +54,6 @@ public class AuthService
 
         private string GenerateRandomToken()
         {
-            // Simple token generation using Guid
             return Guid.NewGuid().ToString() + "-" + DateTime.UtcNow.Ticks.ToString("x");
         }
 
