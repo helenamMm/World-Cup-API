@@ -129,7 +129,6 @@ public class PartidoController : ControllerBase
             {
                 return BadRequest("Los grupos de los equipos deben coincidir");
             }
-//Tengo que poner otra validacion que sea que el grupo del partido en general coincida con el de los equipos
             var partido = new Partido
             {
                 EquipoAId = createDto.EquipoAId,
