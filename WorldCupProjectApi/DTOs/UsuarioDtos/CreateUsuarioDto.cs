@@ -19,5 +19,11 @@ public class CreateUsuarioDto
     
     [MinLength(6, ErrorMessage = "La contraseña debe tener al menos 6 caracteres")]
     public string Contra { get; set; }
-    public string Rol { get; set; } = "user";
+    private string _rol = "user";
+
+    public string Rol
+    {
+        get => _rol;
+        set => _rol = string.IsNullOrWhiteSpace(value) ? "user" : value;
+    } 
 }
