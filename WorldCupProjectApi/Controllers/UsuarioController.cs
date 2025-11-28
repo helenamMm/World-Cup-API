@@ -125,6 +125,7 @@ namespace WorldCupProjectApi.Controllers
                 Id = usuario.Id,
                 Nombre = usuario.Nombre,
                 Apellido = usuario.Apellido,
+                FechaNacimiento = usuario.FechaNacimiento,
                 Correo = usuario.Correo,
                 Rol = usuario.Rol,
                 FechaRegistro = usuario.FechaRegistro,
