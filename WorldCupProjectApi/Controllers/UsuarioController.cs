@@ -71,6 +71,18 @@ namespace WorldCupProjectApi.Controllers
             var usuario = await _usuarioService.GetByIdAsync(id);
             return Ok(MapToDto(usuario));
         }
+
+        [HttpPost("validar-token")]
+        public ActionResult<bool> ValidarToken([FromBody] TokenValidationRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Token))
+            {
+                return BadRequest("El token es requerido.");
+            }
+            var principal = _authService.ValidateToken(request.Token);
+            bool esValido = principal != null;
+            return Ok(esValido);
+        }
         
         [HttpPost] 
         public async Task<ActionResult<UsuarioDto>> CreateUsuario([FromBody] CreateUsuarioDto createDto)
