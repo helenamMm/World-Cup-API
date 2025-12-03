@@ -98,23 +98,24 @@ public class EquipoController: ControllerBase
             return CreatedAtAction(nameof(GetEquipo), new { id = equipo.Id }, MapToDto(equipo));
         }
     
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateEquipo(string id, [FromBody] UpdateEquipoDto updateDto)
-        {
-            var equipo = await _equipoService.GetByIdAsync(id);
-            if (equipo == null) return NotFound();
+    [HttpPut("{id}")]
+    public async Task<ActionResult> UpdateEquipo(string id, [FromBody] UpdateEquipoDto updateDto)
+    {
+        var equipo = await _equipoService.GetByIdAsync(id);
+        if (equipo == null) return NotFound();
+        
+        equipo.Nombre = !string.IsNullOrEmpty(updateDto.Nombre) ? updateDto.Nombre : equipo.Nombre;
+        equipo.NombreCompletoPais = !string.IsNullOrEmpty(updateDto.NombreCompletoPais) ? updateDto.NombreCompletoPais : equipo.NombreCompletoPais;
+        equipo.Bandera = !string.IsNullOrEmpty(updateDto.Bandera) ? updateDto.Bandera : equipo.Bandera;
+        equipo.Informacion = !string.IsNullOrEmpty(updateDto.Informacion) ? updateDto.Informacion : equipo.Informacion;
+        equipo.Grupo = !string.IsNullOrEmpty(updateDto.Grupo) ? updateDto.Grupo : equipo.Grupo;
+        
+        equipo.RankingFifa = updateDto.RankingFifa ?? equipo.RankingFifa;
 
-            equipo.Nombre = updateDto.Nombre ?? equipo.Nombre;
-            equipo.NombreCompletoPais = updateDto.NombreCompletoPais ?? equipo.NombreCompletoPais;
-            equipo.Bandera = updateDto.Bandera ?? equipo.Bandera;
-            equipo.Informacion = updateDto.Informacion ?? equipo.Informacion;
-            equipo.Grupo = updateDto.Grupo ?? equipo.Grupo;
-            equipo.RankingFifa = updateDto.RankingFifa ?? equipo.RankingFifa;
-
-            await _equipoService.UpdateAsync(id, equipo);
-            
-            return Ok(MapToDto(equipo));
-        }
+        await _equipoService.UpdateAsync(id, equipo);
+    
+        return Ok(MapToDto(equipo));
+    }
 
     
         [HttpDelete("{id}")]

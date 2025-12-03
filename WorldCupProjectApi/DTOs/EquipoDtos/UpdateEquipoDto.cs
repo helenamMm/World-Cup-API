@@ -3,11 +3,18 @@ namespace WorldCupProjectApi.DTOs;
 
 public class UpdateEquipoDto
 {
+    private string _nombre;
+    private string _nombreCompletoPais;
+    private string _bandera;
+    private string _informacion;
+    private string _grupo;
+    
     [StringLength(100, ErrorMessage = "El nombre no puede exceder 100 caracteres")]
     public string? Nombre { get; set; }
+    
     public string? NombreCompletoPais { get; set; }
     
-    [Url(ErrorMessage = "La bandera debe ser una URL válida")]
+    
     public string? Bandera { get; set; }
     public string? Informacion { get; set; }
     

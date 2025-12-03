@@ -11,7 +11,7 @@ public class CreateEquipoDto
     public string NombreCompletoPais { get; set; }
     
     [Required(ErrorMessage = "La bandera es requerida")]
-    [Url(ErrorMessage = "La bandera debe ser una URL válida")]  
+    
     public string Bandera { get; set; }
     public string Informacion { get; set; }
     

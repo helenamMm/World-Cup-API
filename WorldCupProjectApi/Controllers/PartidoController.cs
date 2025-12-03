@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.JavaScript;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using WorldCupProjectApi.DTOs;
@@ -149,25 +150,71 @@ public class PartidoController : ControllerBase
 
             return CreatedAtAction(nameof(GetPartido), new { id = partido.Id }, MapToDto(partido));
         }
-
-    
+        
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdatePartido(string id, [FromBody] UpdatePartidoDto updateDto)
         {
-            if (updateDto.Estado != null && !WorldCupConstants.EstadosPartidoPermitidos.Contains(updateDto.Estado))
-                return BadRequest($"Estado inválido. Estados permitidos: {string.Join(", ", WorldCupConstants.EstadosPartidoPermitidos)}");
+            try
+            {
+                if (updateDto == null) 
+                    return BadRequest("El cuerpo de la solicitud no puede estar vacío");
 
-            var partido = await _partidoService.GetByIdAsync(id);
-            if (partido == null) return NotFound();
+        
+                if (!string.IsNullOrEmpty(updateDto.Estado))
+                {
+                    var estadoUpper = updateDto.Estado.ToUpper();
+                    if (!WorldCupConstants.EstadosPartidoPermitidos.Contains(estadoUpper))
+                    return BadRequest($"Estado inválido. Estados permitidos: {string.Join(", ", WorldCupConstants.EstadosPartidoPermitidos)}");
 
-            partido.GolesEquipoA = updateDto.GolesEquipoA;
-            partido.GolesEquipoB = updateDto.GolesEquipoB;
-            partido.Estado = updateDto.Estado ?? partido.Estado;
-            partido.ArbitroPrincipal = updateDto.ArbitroPrincipal ?? partido.ArbitroPrincipal;
-            partido.FechaActualizacion = DateTime.UtcNow;
+                    updateDto.Estado = estadoUpper;
+                }
 
-            await _partidoService.UpdateAsync(id, partido);
-            return CreatedAtAction(nameof(GetPartido), new { id = partido.Id }, MapToDto(partido));
+      
+                if (!string.IsNullOrEmpty(updateDto.Fase))
+                {
+                    var faseUpper = updateDto.Fase.ToUpper();
+                    if (!WorldCupConstants.FasesPermitidas.Contains(faseUpper))
+                    return BadRequest($"Fase inválida. Fases permitidas: {string.Join(", ", WorldCupConstants.FasesPermitidas)}");
+            
+                    updateDto.Fase = faseUpper;
+                }
+
+        
+                if (!string.IsNullOrEmpty(updateDto.Grupo))
+                {
+                    var grupoUpper = updateDto.Grupo.ToUpper();
+                    if (grupoUpper.Length > 1 || !char.IsLetter(grupoUpper[0]))
+                    return BadRequest("El grupo debe ser una sola letra");
+            
+                    updateDto.Grupo = grupoUpper;
+                }
+
+        
+                var partido = await _partidoService.GetByIdAsync(id);
+                if (partido == null) 
+                return NotFound($"Partido con ID {id} no encontrado");
+
+        
+                partido.Fecha = updateDto.Fecha ?? partido.Fecha;
+                    
+                    // For strings, use !string.IsNullOrEmpty()
+                    partido.Estadio = !string.IsNullOrEmpty(updateDto.Estadio) ? updateDto.Estadio : partido.Estadio;
+                    partido.Ciudad = !string.IsNullOrEmpty(updateDto.Ciudad) ? updateDto.Ciudad : partido.Ciudad;
+                    partido.Estado = !string.IsNullOrEmpty(updateDto.Estado) ? updateDto.Estado : partido.Estado;
+                    partido.Fase = !string.IsNullOrEmpty(updateDto.Fase) ? updateDto.Fase : partido.Fase;
+                    partido.Grupo = !string.IsNullOrEmpty(updateDto.Grupo) ? updateDto.Grupo : partido.Grupo;
+                    partido.ArbitroPrincipal = !string.IsNullOrEmpty(updateDto.ArbitroPrincipal) ? updateDto.ArbitroPrincipal : partido.ArbitroPrincipal;
+                    
+                    partido.FechaActualizacion = DateTime.UtcNow;
+                    
+                    await _partidoService.UpdateAsync(id, partido);
+                    var partidoUpdated = await _partidoService.GetWithTeamsAsync(id);
+                    return Ok(MapToDto(partidoUpdated));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocurrió un error interno al procesar la solicitud");
+            }
         }
 
     
