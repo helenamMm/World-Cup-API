@@ -22,5 +22,5 @@ public class UpdateEquipoDto
     
     [Range(1, 211, ErrorMessage = "El ranking FIFA debe estar entre 1 y 211")]
     public int? RankingFifa { get; set; }
-    public List<UpdateJugadorDto>? Jugadores { get; set; }
+    //public List<UpdateJugadorDto>? Jugadores { get; set; }
 }
